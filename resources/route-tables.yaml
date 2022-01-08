@@ -1,0 +1,99 @@
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: RouteTable
+metadata:
+  name: private-rtb-1
+spec:
+  forProvider:
+    region: eu-west-3
+    associations:
+      - subnetIdSelector:
+          matchLabels:
+            name: private-subnet-1
+    routes:
+      - destinationCidrBlock: 0.0.0.0/0
+        natGatewayIdSelector:
+          matchLabels:
+            name: ngw-1
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    tags:
+      - key: Name
+        value: private-rtb-1
+  providerConfigRef:
+    name: aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: RouteTable
+metadata:
+  name: private-rtb-2
+spec:
+  forProvider:
+    region: eu-west-3
+    associations:
+      - subnetIdSelector:
+          matchLabels:
+            name: private-subnet-2
+    routes:
+      - destinationCidrBlock: 0.0.0.0/0
+        natGatewayIdSelector:
+          matchLabels:
+            name: ngw-2
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    tags:
+      - key: Name
+        value: private-rtb-2
+  providerConfigRef:
+    name: aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: RouteTable
+metadata:
+  name: public-rtb-1
+spec:
+  forProvider:
+    region: eu-west-3
+    associations:
+      - subnetIdSelector:
+          matchLabels:
+            name: public-subnet-1
+    routes:
+      - destinationCidrBlock: 0.0.0.0/0
+        gatewayIdSelector:
+          matchLabels:
+            name: igw
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    tags:
+      - key: Name
+        value: public-rtb-1
+  providerConfigRef:
+    name: aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: RouteTable
+metadata:
+  name: public-rtb-2
+spec:
+  forProvider:
+    region: eu-west-3
+    associations:
+      - subnetIdSelector:
+          matchLabels:
+            name: public-subnet-2
+    routes:
+      - destinationCidrBlock: 0.0.0.0/0
+        gatewayIdSelector:
+          matchLabels:
+            name: igw
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    tags:
+      - key: Name
+        value: public-rtb-2
+  providerConfigRef:
+    name: aws

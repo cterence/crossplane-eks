@@ -1,0 +1,27 @@
+apiVersion: ec2.aws.crossplane.io/v1alpha1
+kind: Instance
+metadata:
+  name: bastion
+spec:
+  forProvider:
+    region: eu-west-3
+    # Ubuntu 20.04
+    imageId: ami-0c6ebbd55ab05f070
+    # Check ssm-iam-instance-profile.yaml for info
+    iamInstanceProfile:
+      name: ec2-ssm-ip
+    instanceType: t2.micro
+    # Created with :
+    # > aws ec2 create-key-pair --key-name bastion
+    keyName: bastion
+    securityGroupSelector:
+      matchLabels:
+        group: compute-sg
+    subnetIdSelector:
+      matchLabels:
+        name: private-subnet-1
+    tags:
+      - key: Name
+        value: bastion
+  providerConfigRef:
+    name: aws

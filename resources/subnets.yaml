@@ -1,0 +1,87 @@
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  name: private-subnet-1
+  labels:
+    name: private-subnet-1
+    type: private
+spec:
+  forProvider:
+    region: eu-west-3
+    availabilityZone: eu-west-3a
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    cidrBlock: 10.10.0.0/18
+    mapPublicIPOnLaunch: false
+    tags:
+      - key: Name
+        value: private-subnet-1
+  providerConfigRef:
+    name: aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  name: private-subnet-2
+  labels:
+    name: private-subnet-2
+    type: private
+spec:
+  forProvider:
+    region: eu-west-3
+    availabilityZone: eu-west-3b
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    cidrBlock: 10.10.64.0/18
+    mapPublicIPOnLaunch: false
+    tags:
+      - key: Name
+        value: private-subnet-2
+  providerConfigRef:
+    name: aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  name: public-subnet-1
+  labels:
+    name: public-subnet-1
+    type: public
+spec:
+  forProvider:
+    region: eu-west-3
+    availabilityZone: eu-west-3a
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    cidrBlock: 10.10.128.0/18
+    mapPublicIPOnLaunch: false
+    tags:
+      - key: Name
+        value: public-subnet-1
+  providerConfigRef:
+    name: aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  name: public-subnet-2
+  labels:
+    name: public-subnet-2
+    type: public
+spec:
+  forProvider:
+    region: eu-west-3
+    availabilityZone: eu-west-3b
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    cidrBlock: 10.10.192.0/18
+    mapPublicIPOnLaunch: false
+    tags:
+      - key: Name
+        value: public-subnet-2
+  providerConfigRef:
+    name: aws

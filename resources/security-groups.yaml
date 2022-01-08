@@ -1,0 +1,58 @@
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: compute-sg
+  labels:
+    name: compute-sg
+    group: compute-sg
+spec:
+  forProvider:
+    region: eu-west-3
+    description: Compute security group
+    groupName: compute-sg
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    tags:
+      - key: Name
+        value: compute-sg
+  providerConfigRef:
+    name: aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: allow-compute-sg-traffic
+  labels:
+    name: allow-compute-sg-traffic
+    group: compute-sg
+spec:
+  forProvider:
+    region: eu-west-3
+    description: Security group that allows traffic from all the members of the compute-sg group
+    groupName: allow-compute-sg-traffic
+    ingress:
+      - fromPort: 0
+        toPort: 0
+        ipProtocol: "-1"
+        userIdGroupPairs:
+          - groupIdSelector:
+              matchLabels:
+                name: compute-sg
+            vpcIdSelector:
+              matchLabels:
+                name: sandbox-vpc
+    egress:
+      - fromPort: 0
+        toPort: 0
+        ipProtocol: "-1"
+        ipRanges:
+          - cidrIp: 0.0.0.0/0
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    tags:
+      - key: Name
+        value: allow-compute-sg-traffic
+  providerConfigRef:
+    name: aws

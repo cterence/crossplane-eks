@@ -1,0 +1,61 @@
+apiVersion: eks.aws.crossplane.io/v1alpha1
+kind: NodeGroup
+metadata:
+  name: blue-node-group
+  labels:
+    name: blue-node-group
+spec:
+  forProvider:
+    region: eu-west-3
+    version: "1.21"
+    diskSize: 8
+    instanceTypes:
+      - t3.medium
+    scalingConfig:
+      desiredSize: 1
+      minSize: 1
+      maxSize: 2
+    nodeRoleSelector:
+      matchLabels:
+        name: eks-node-group-role
+    clusterNameSelector:
+      matchLabels:
+        name: eks-cluster
+    subnetSelector:
+      matchLabels:
+        type: private
+    tags:
+      Name: blue-node-group
+  providerConfigRef:
+    name: aws
+---
+apiVersion: eks.aws.crossplane.io/v1alpha1
+kind: NodeGroup
+metadata:
+  name: green-node-group
+  labels:
+    name: green-node-group
+spec:
+  forProvider:
+    region: eu-west-3
+    version: "1.21"
+    diskSize: 8
+    instanceTypes:
+      - t3.medium
+    scalingConfig:
+      desiredSize: 1
+      minSize: 1
+      maxSize: 2
+    nodeRoleSelector:
+      matchLabels:
+        name: eks-node-group-role
+    clusterNameSelector:
+      matchLabels:
+        name: eks-cluster
+    subnetSelector:
+      matchLabels:
+        type: private
+    tags:
+      Name: green-node-group
+  providerConfigRef:
+    name: aws

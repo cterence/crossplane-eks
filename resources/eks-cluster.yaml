@@ -1,0 +1,26 @@
+apiVersion: eks.aws.crossplane.io/v1beta1
+kind: Cluster
+metadata:
+  name: eks-cluster
+  labels:
+    name: eks-cluster
+spec:
+  forProvider:
+    region: eu-west-3
+    version: "1.21"
+    roleArnSelector:
+      matchLabels:
+        name: eks-cluster-role
+    resourcesVpcConfig:
+      endpointPrivateAccess: true
+      endpointPublicAccess: false
+      securityGroupIdSelector:
+        matchLabels:
+          group: compute-sg
+      subnetIdSelector:
+        matchLabels:
+          type: private
+    tags:
+      Name: eks-cluster
+  providerConfigRef:
+    name: aws

@@ -1,0 +1,17 @@
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: InternetGateway
+metadata:
+  name: igw
+  labels:
+    name: igw
+spec:
+  forProvider:
+    region: eu-west-3
+    vpcIdSelector:
+      matchLabels:
+        name: sandbox-vpc
+    tags:
+      - key: Name
+        value: igw
+  providerConfigRef:
+    name: aws

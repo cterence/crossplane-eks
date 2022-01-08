@@ -1,0 +1,69 @@
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: Role
+metadata:
+  name: eks-node-group-role
+  labels:
+    name: eks-node-group-role
+spec:
+  forProvider:
+    assumeRolePolicyDocument: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {"Service": "ec2.amazonaws.com"},
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      }
+    tags:
+      - key: Name
+        value: eks-node-group
+  providerConfigRef:
+    name: aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: eks-node-group-worker-role-policy-attachment
+  labels:
+    name: eks-node-group-worker-role-policy-attachment
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+    roleNameSelector:
+      matchLabels:
+        name: eks-node-group-role
+  providerConfigRef:
+    name: aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: eks-node-group-ecr-role-policy-attachment
+  labels:
+    name: eks-node-group-ecr-role-policy-attachment
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+    roleNameSelector:
+      matchLabels:
+        name: eks-node-group-role
+  providerConfigRef:
+    name: aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: eks-node-group-cni-role-policy-attachment
+  labels:
+    name: eks-node-group-cni-role-policy-attachment
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+    roleNameSelector:
+      matchLabels:
+        name: eks-node-group-role
+  providerConfigRef:
+    name: aws

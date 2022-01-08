@@ -1,0 +1,62 @@
+# !!! Dependent on the ec2-ssm-ip instance profile not managed by crossplane
+# To create the ec2-ssm-ip instance profile and attach the ec2-ssm-role
+# > aws iam create-instance-profile --instance-profile-name ec2-ssm-ip
+# > aws iam add-role-to-instance-profile --instance-profile-name ec2-ssm-ip --role-name ec2-ssm-role
+# Delete :
+# > aws iam remove-role-from-instance-profile --instance-profile-name ec2-ssm-ip --role-name ec2-ssm-role
+# > aws iam delete-instance-profile --instance-profile-name ec2-ssm-ip
+
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: Role
+metadata:
+  name: ec2-ssm-role
+  labels:
+    name: ec2-ssm-role
+spec:
+  forProvider:
+    assumeRolePolicyDocument: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {"Service": "ec2.amazonaws.com"},
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      }
+    tags:
+      - key: Name
+        value: ec2-ssm-role
+  providerConfigRef:
+    name: aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: ssm-managed-instance-core-role-policy-attachment
+  labels:
+    name: ssm-managed-instance-core-role-policy-attachment
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+    roleNameSelector:
+      matchLabels:
+        name: ec2-ssm-role
+  providerConfigRef:
+    name: aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: ec2-ssm-role-policy-attachment
+  labels:
+    name: rp-ec2-ssm
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+    roleNameSelector:
+      matchLabels:
+        name: ec2-ssm-role
+  providerConfigRef:
+    name: aws

@@ -1,0 +1,73 @@
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: NATGateway
+metadata:
+  name: ngw-1
+  labels:
+    name: ngw-1
+spec:
+  forProvider:
+    region: eu-west-3
+    connectivityType: public
+    allocationIdSelector:
+      matchLabels:
+        name: elastic-ip-1
+    subnetIdSelector:
+      matchLabels:
+        name: public-subnet-1
+    tags:
+      - key: Name
+        value: ngw-1
+  providerConfigRef:
+    name: aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: NATGateway
+metadata:
+  name: ngw-2
+  labels:
+    name: ngw-2
+spec:
+  forProvider:
+    region: eu-west-3
+    connectivityType: public
+    allocationIdSelector:
+      matchLabels:
+        name: elastic-ip-2
+    subnetIdSelector:
+      matchLabels:
+        name: public-subnet-2
+    tags:
+      - key: Name
+        value: ngw-2
+  providerConfigRef:
+    name: aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Address
+metadata:
+  name: elastic-ip-1
+  labels:
+    name: elastic-ip-1
+spec:
+  forProvider:
+    region: eu-west-3
+    tags:
+      - key: Name
+        value: elastic-ip-1
+  providerConfigRef:
+    name: aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Address
+metadata:
+  name: elastic-ip-2
+  labels:
+    name: elastic-ip-2
+spec:
+  forProvider:
+    region: eu-west-3
+    tags:
+      - key: Name
+        value: elastic-ip-2
+  providerConfigRef:
+    name: aws

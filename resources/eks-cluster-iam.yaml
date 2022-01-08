@@ -1,0 +1,39 @@
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: Role
+metadata:
+  name: eks-cluster-role
+  labels:
+    name: eks-cluster-role
+spec:
+  forProvider:
+    assumeRolePolicyDocument: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {"Service": "eks.amazonaws.com"},
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      }
+    tags:
+      - key: Name
+        value: eks-cluster-role
+  providerConfigRef:
+    name: aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: eks-cluster-role-policy-attachment
+  labels:
+    name: eks-cluster-role-policy-attachment
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+    roleNameSelector:
+      matchLabels:
+        name: eks-cluster-role
+  providerConfigRef:
+    name: aws
