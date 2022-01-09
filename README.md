@@ -43,17 +43,23 @@ With the root account in the console :
   - Add this to your `~/.aws/credentials` file :
 
   ```
-  [admin]
+  [default]
   aws_access_key_id = <your_access_keys>
   aws_secret_access_key = <your_secret_keys>
-
-  [default]
   role_arn = arn:aws:iam::<your_account_id>:role/administrator
-  source_profile = admin
+  source_profile = default
   ```
 
 - Create a `crossplane` IAM user with no attached policy and access keys
 - Create an `administrator` IAM role with the AdministratorAccess policy attached and a trust relationship allowing the two user above to assume the role
+
+**Why do we do this?**
+
+When creating an EKS cluster, AWS creates a Configmap named `aws-auth` which maps IAM identities to Kubernetes users and groups. If Crossplane creates the cluster only using its user credentials, it will be the only one able to access it.
+
+The trick is if you set the provider's credentials to assume an IAM role that your personal user and Crossplane's user can assume, it will be the one added to the `aws-auth` Configmap, thus granting you access to the cluster from the get go.
+
+**Resources to create manually**
 
 Create these resources manually (no crossplane support yet) :
 
@@ -82,7 +88,13 @@ aws iam create-instance-profile --instance-profile-name ec2-ssm-ip
 
 ### Connect to the cluster
 
-After the cluster was successfully deployed, use the [tunnel script](./tools/tunnel_eks.sh) to connect to the bastion (will need `sudo` for `sshuttle`) :
+Add the cluster's credentials to your kubeconfig :
+
+```bash
+aws eks update-kubeconfig --cluster eks-cluster
+```
+
+Use the [tunnel script](./tools/tunnel_eks.sh) to connect to the bastion (will need `sudo` for `sshuttle`) :
 
 ```
 # You can specify the bastion name and cluster name as args 1 and 2 of this script if you changed them
